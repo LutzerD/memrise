@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Text, View, Button, Dimensions, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  Button,
+  Dimensions,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 const pi = require("./pi.json").value;
 
 const MajorSystem = {
@@ -24,19 +31,22 @@ const PreviousDigit = (props) => {
     </View>
   );
 };
+const StackedDigits = (props) => {
+  return (
+    <View style={styles.col}>
+      <Text>{MajorSystem[props.char]}</Text>
+      <Text>{props.char}</Text>
+    </View>
+  );
+};
 
 const MainDigit = (props) => {
   const digits = pi.substring(props.digit - numWidth, props.digit);
   const a = (
-    <View style={styles.focused}>
-      <Text>
-        {digits.split("").map((char) => (
-          <View style={styles.col}>
-            <Text>{MajorSystem[char]}</Text>
-            <Text>{char}</Text>
-          </View>
-        ))}
-      </Text>
+    <View style={styles.row}>
+      {digits.split("").map((char, i) => (
+        <StackedDigits char={char} key={i} />
+      ))}
     </View>
   );
   return a;
@@ -45,11 +55,23 @@ const numWidth = 3;
 const memrise = () => {
   const [index, setIndex] = useState(numWidth);
   return (
-    <View>
-      <View style={styles.score}>
-        <text>hi</text>
+    <SafeAreaView style={styles.container}>
+      <View>
+        <View style={styles.score}>
+          <Text>{index}</Text>
+        </View>
+        <View style={styles.digitsRow}>
+          <PreviousDigit
+            digit={index - numWidth}
+            style={styles.previousDigit}
+          />
+          <MainDigit digit={index} style={styles.mainDigit} />
+        </View>
       </View>
-    </View>
+      <View style="nextButton">
+        <Button title="Next" onPress={() => setIndex(index + numWidth)} />
+      </View>
+    </SafeAreaView>
   );
 };
 const { width } = Dimensions.get("window");
@@ -58,12 +80,8 @@ const previousFontSizeStyle = (width / 7) * 3;
 export default memrise;
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
+    margin: "10%",
     flex: 1,
-    justifyContent: "center",
-    marginHorizontal: 16,
-    color: "rgb(255, 0, 0)",
   },
   score: {
     alignItems: "center",
@@ -72,21 +90,22 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-end",
   },
+  digitsRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+  },
   row: {
     flexDirection: "row",
     alignItems: "flex-end",
   },
   navigationButtons: {},
-  previous: {
+  previousDigit: {
     flex: 3,
     fontSize: 20,
   },
-  focused: {
+  mainDigit: {
     flex: 3,
-    fontSize: 20,
-  },
-  concealed: {
-    flex: 1,
     fontSize: 20,
   },
 });
