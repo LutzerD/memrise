@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Text,
   View,
+  PixelRatio,
   Button,
   Dimensions,
   StyleSheet,
@@ -10,32 +11,32 @@ import {
 const pi = require("./pi.json").value;
 
 const MajorSystem = {
-  0: "/s/,/z/",
-  1: "/t/,/d/",
-  2: "/n/",
-  3: "/m/",
-  4: "/r/",
-  5: "/L/",
-  6: "/cz/,/ch/",
-  7: "/k/,/g/",
-  8: "/f/,/v/",
-  9: "/p/,/b/",
+  0: "s,z",
+  1: "t,d",
+  2: "n",
+  3: "m",
+  4: "r",
+  5: "L",
+  6: "cz,ch",
+  7: "k,g",
+  8: "f,v",
+  9: "p,b",
 };
 
 const PreviousDigit = (props) => {
   const val =
     props.digit > 0 ? pi.substring(props.digit - numWidth, props.digit) : "";
   return (
-    <View style={styles.previous}>
-      <Text>{val}</Text>
+    <View style={styles.pd}>
+      <Text style={styles.pd}>{val}</Text>
     </View>
   );
 };
 const StackedDigits = (props) => {
   return (
-    <View style={styles.col}>
-      <Text>{MajorSystem[props.char]}</Text>
-      <Text>{props.char}</Text>
+    <View style={[styles.col, styles.outlined, styles.centered]}>
+      <Text style={styles.majorSystem}>{MajorSystem[props.char]}</Text>
+      <Text style={styles.mainDigit}>{props.char}</Text>
     </View>
   );
 };
@@ -56,20 +57,18 @@ const memrise = () => {
   const [index, setIndex] = useState(numWidth);
   return (
     <SafeAreaView style={styles.container}>
-      <View>
-        <View style={styles.score}>
-          <Text>{index}</Text>
-        </View>
+      <View style={styles.score}>
+        <Text style={styles.score}>{index}</Text>
+      </View>
+      <View style={styles.body}>
         <View style={styles.digitsRow}>
-          <PreviousDigit
-            digit={index - numWidth}
-            style={styles.previousDigit}
-          />
+          <PreviousDigit digit={index - numWidth} />
           <MainDigit digit={index} style={styles.mainDigit} />
         </View>
-      </View>
-      <View style="nextButton">
-        <Button title="Next" onPress={() => setIndex(index + numWidth)} />
+
+        <View style={styles.nextButton}>
+          <Button title="Next" onPress={() => setIndex(index + numWidth)} />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -85,27 +84,47 @@ const styles = StyleSheet.create({
   },
   score: {
     alignItems: "center",
+    fontSize: 10 * PixelRatio.get(),
   },
   col: {
     flexDirection: "column",
     alignItems: "flex-end",
   },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  body: {
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    flex: 1,
+    height: "100%",
+    backgroundColor: "#5A9BD4",
+  },
+  nextButton: {
+    width: "100%",
+  },
+  outlined: {
+    borderRightColor: "red",
+    borderRightWidth: StyleSheet.hairlineWidth,
+  },
   digitsRow: {
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "space-between",
+    flex: 1,
   },
   row: {
     flexDirection: "row",
     alignItems: "flex-end",
   },
-  navigationButtons: {},
-  previousDigit: {
-    flex: 3,
-    fontSize: 20,
+  majorSystem: {
+    fontSize: 10 * PixelRatio.get(),
+  },
+  pd: {
+    fontSize: 20 * PixelRatio.get(),
   },
   mainDigit: {
-    flex: 3,
-    fontSize: 20,
+    fontSize: 40 * PixelRatio.get(),
   },
 });
