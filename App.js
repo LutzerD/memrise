@@ -7,6 +7,7 @@ import {
   Dimensions,
   StyleSheet,
   SafeAreaView,
+  TouchableOpacity,
 } from "react-native";
 const pi = require("./pi.json").value;
 
@@ -58,16 +59,20 @@ const memrise = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.score}>
-        <Text style={styles.score}>{index}</Text>
+        <Text style={styles.score}>Score: {index}</Text>
       </View>
       <View style={styles.body}>
         <View style={styles.digitsRow}>
           <PreviousDigit digit={index - numWidth} />
           <MainDigit digit={index} style={styles.mainDigit} />
         </View>
-
-        <View style={styles.nextButton}>
-          <Button title="Next" onPress={() => setIndex(index + numWidth)} />
+        <View>
+          <View style={styles.nextButton}>
+            <Button title="Next" onPress={() => setIndex(index + numWidth)} />
+          </View>
+          <View style={styles.nextButton}>
+            <Button title="Next" onPress={() => setIndex(index + numWidth)} />
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -90,6 +95,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-end",
   },
+  buttonRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   centered: {
     justifyContent: "center",
     alignItems: "center",
@@ -101,8 +110,17 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#5A9BD4",
   },
+  nextButtonView: {
+    flex: 1,
+    //width: "100%",
+  },
   nextButton: {
-    width: "100%",
+    flex: 1,
+  },
+  nextButtonView: {
+    margin: "5%",
+    height: "20%",
+    //width: "100%",
   },
   outlined: {
     borderRightColor: "red",
