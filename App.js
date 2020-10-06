@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Text,
   View,
@@ -8,6 +8,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 const pi = require("./pi.json").value;
 
@@ -53,6 +54,29 @@ const MainDigit = (props) => {
   );
   return a;
 };
+
+const FadeInText = (props) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 10000,
+    }).start();
+  }, [fadeAnim]);
+
+  return (
+    <Animated.Text // Special animatable View
+      style={{
+        ...props.style,
+        opacity: fadeAnim, // Bind opacity to animated value
+      }}
+    >
+      {props.children}
+    </Animated.Text>
+  );
+};
+
 const numWidth = 3;
 const memrise = () => {
   const [index, setIndex] = useState(numWidth);
@@ -66,12 +90,27 @@ const memrise = () => {
           <PreviousDigit digit={index - numWidth} />
           <MainDigit digit={index} style={styles.mainDigit} />
         </View>
-        <View>
-          <View style={styles.nextButton}>
-            <Button title="Next" onPress={() => setIndex(index + numWidth)} />
+        <View style={styles.buttonRow}>
+          <View style={styles.nextButtonView}>
+            <TouchableOpacity
+              style={[styles.prevButton]}
+              onPress={() => setIndex(index - numWidth)}
+            >
+              <Text style={[styles.arrowText, styles.button]}> ← </Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.nextButton}>
-            <Button title="Next" onPress={() => setIndex(index + numWidth)} />
+          <View style={styles.nextButtonView}>
+            <TouchableOpacity
+              style={[styles.nextButton]}
+              onPress={() => setIndex(index + numWidth)}
+            >
+              <FadeInText
+                style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+              >
+                {" "}
+                →{" "}
+              </FadeInText>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -112,15 +151,7 @@ const styles = StyleSheet.create({
   },
   nextButtonView: {
     flex: 1,
-    //width: "100%",
-  },
-  nextButton: {
-    flex: 1,
-  },
-  nextButtonView: {
-    margin: "5%",
-    height: "20%",
-    //width: "100%",
+    width: "100%",
   },
   outlined: {
     borderRightColor: "red",
@@ -131,6 +162,22 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     justifyContent: "space-between",
     flex: 1,
+  },
+  button: {
+    textAlign: "center",
+
+    textAlignVertical: "center",
+  },
+  arrowText: {
+    fontSize: 50 * PixelRatio.get(),
+    textAlignVertical: "center",
+    textAlign: "center",
+  },
+  prevButton: {
+    backgroundColor: "#fafafa",
+  },
+  nextButton: {
+    backgroundColor: "#20232a",
   },
   row: {
     flexDirection: "row",
