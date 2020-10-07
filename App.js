@@ -1,10 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, setState, useRef } from "react";
 import {
   Text,
   View,
   PixelRatio,
   Button,
   Dimensions,
+  TextInput,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
@@ -44,7 +45,9 @@ const StackedDigits = (props) => {
 };
 
 const MainDigit = (props) => {
-  const digits = pi.substring(props.digit - numWidth, props.digit);
+  const digits =
+    props.text || pi.substring(props.digit - numWidth, props.digit);
+
   const a = (
     <View style={styles.row}>
       {digits.split("").map((char, i) => (
@@ -61,6 +64,7 @@ const FadeInText = (props) => {
   React.useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
+      useNativeDriver: true,
       duration: 10000,
     }).start();
   }, [fadeAnim]);
@@ -80,26 +84,48 @@ const FadeInText = (props) => {
 const numWidth = 3;
 const memrise = () => {
   const [index, setIndex] = useState(numWidth);
+  const [inputValue, setInputValue] = useState("");
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.score}>
         <Text style={styles.score}>Score: {index}</Text>
+        <TouchableOpacity
+          style={[styles.prevButton]}
+          onPress={() => setIndex(0)}
+        >
+          <FadeInText style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
+            RESET
+          </FadeInText>
+        </TouchableOpacity>
       </View>
       <View style={styles.body}>
         <View style={styles.digitsRow}>
           <PreviousDigit digit={index - numWidth} />
-          <MainDigit digit={index} style={styles.mainDigit} />
+          <MainDigit digit={index} text={inputValue} style={styles.mainDigit} />
         </View>
         <View style={styles.buttonRow}>
-          <View style={styles.nextButtonView}>
+          <TextInput
+            autoFocus
+            style={styles.invisible}
+            onChangeText={(text) => setInputValue(text)}
+            editable
+            maxLength={3}
+            keyboardType="numeric"
+          />
+          {/* <View style={styles.nextButtonView}>
             <TouchableOpacity
               style={[styles.prevButton]}
               onPress={() => setIndex(index - numWidth)}
             >
-              <Text style={[styles.arrowText, styles.button]}> ← </Text>
+              <FadeInText
+                style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+              >
+                ←
+              </FadeInText>
             </TouchableOpacity>
-          </View>
-          <View style={styles.nextButtonView}>
+          </View> */}
+          {/* <View style={styles.nextButtonView}>
             <TouchableOpacity
               style={[styles.nextButton]}
               onPress={() => setIndex(index + numWidth)}
@@ -107,11 +133,10 @@ const memrise = () => {
               <FadeInText
                 style={{ fontSize: 28, textAlign: "center", margin: 10 }}
               >
-                {" "}
-                →{" "}
-              </FadeInText>
+                →
+              </FadeInText> 
             </TouchableOpacity>
-          </View>
+          </View>*/}
         </View>
       </View>
     </SafeAreaView>
@@ -137,6 +162,9 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  invisible: {
+    opacity: 0,
   },
   centered: {
     justifyContent: "center",
@@ -177,7 +205,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa",
   },
   nextButton: {
-    backgroundColor: "#20232a",
+    backgroundColor: "red",
+    color: "black",
   },
   row: {
     flexDirection: "row",
