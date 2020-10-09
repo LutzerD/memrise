@@ -35,6 +35,7 @@ const PreviousDigit = (props) => {
     </View>
   );
 };
+
 const StackedDigits = (props) => {
   return (
     <View style={[styles.col, styles.outlined, styles.centered]}>
@@ -56,6 +57,50 @@ const MainDigit = (props) => {
     </View>
   );
   return a;
+};
+
+const InputStyle = function (props) {
+  var inputValue = props.inputValue;
+  const a = (
+    <TextInput
+      autoFocus
+      style={styles.invisible}
+      onChangeText={(text) => paddedIncrement(text)}
+      editable
+      keyboardType="numeric"
+      value={inputValue}
+    />
+  );
+  const b = (
+    <View>
+      <View style={styles.nextButtonView}>
+        <TouchableOpacity
+          style={[styles.prevButton]}
+          onPress={() => setIndex(index - numWidth)}
+        >
+          <FadeInText style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
+            ←
+          </FadeInText>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.nextButtonView}>
+        <TouchableOpacity
+          style={[styles.nextButton]}
+          onPress={() => setIndex(index + numWidth)}
+        >
+          <FadeInText style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
+            →
+          </FadeInText>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  if (props.isLapped) {
+    return a;
+  } else {
+    return b;
+  }
 };
 
 const FadeInText = (props) => {
@@ -85,6 +130,7 @@ const numWidth = 3;
 
 pad = function (text, length) {
   text = text || "";
+
   var output = text.toString();
 
   while (output.length < length) {
@@ -94,18 +140,54 @@ pad = function (text, length) {
   return output;
 };
 
+const rehearseColor = "blue",
+  reciteColor = "red";
+
 const memrise = () => {
   const [index, setIndex] = useState(numWidth);
   const [inputValue, setInputValue] = useState("");
   const [displayedValue, setDisplayedValue] = useState("");
+  const [isLapped, setLapped] = useState(false);
+  const [backgroundColor, setBackgroundColor] = useState(rehearseColor);
 
+  resetGame = function (lapped) {
+    paddedIncrement("reset");
+    if (!isLapped) {
+      setIndex(numWidth);
+    }
+  };
+
+  toggleMode = function () {
+    setLapped(!isLapped);
+    resetColor();
+    resetGame();
+  };
+
+  resetColor = function () {
+    if (isLapped) {
+      setBackgroundColor(reciteColor);
+    } else {
+      setBackgroundColor(rehearseColor);
+    }
+  };
+
+  //called when number entered
   paddedIncrement = function (text) {
-    text = text.toString();
+    if (text == "reset") {
+      setIndex(0);
+      setInputValue("");
+      setDisplayedValue(undefined);
+      return;
+    }
+    var input = text.toString().replace(/[^0-9]/g, "");
 
-    var input = text,
-      display;
+    if (input == text.toString()) {
+      setIndex(index + 1);
+    }
 
-    if (text.length > numWidth) {
+    var display;
+    if (input.length > numWidth) {
+      //truncate
       input = text.substring(numWidth, numWidth + 1);
     }
     display = pad(input, numWidth);
@@ -117,19 +199,22 @@ const memrise = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.score}>
-        <Text style={styles.score}>Score: {index}</Text>
+        <Text style={styles.score}>
+          {isLapped ? "High-Score: " : "Score: "} {index}
+        </Text>
         <TouchableOpacity
-          style={[styles.prevButton]}
-          onPress={() => setIndex(0)}
+          style={[styles.prevButton, { backgroundColor: backgroundColor }]}
+          onPress={() => resetGame()}
+          onLongPress={() => toggleMode()}
         >
           <FadeInText style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
             RESET
           </FadeInText>
         </TouchableOpacity>
       </View>
-      <View style={styles.body}>
+      <View style={[styles.body, { backgroundColor: backgroundColor }]}>
         <View style={styles.digitsRow}>
-          <PreviousDigit digit={index - numWidth} />
+          <PreviousDigit digit={Math.floor(index) - numWidth} />
           <MainDigit
             digit={index}
             text={displayedValue}
@@ -137,38 +222,7 @@ const memrise = () => {
           />
         </View>
         <View style={styles.buttonRow}>
-          <TextInput
-            autoFocus
-            style={styles.invisible}
-            onChangeText={(text) => paddedIncrement(text)}
-            editable
-            keyboardType="numeric"
-            value={inputValue}
-          />
-          {/* <View style={styles.nextButtonView}>
-            <TouchableOpacity
-              style={[styles.prevButton]}
-              onPress={() => setIndex(index - numWidth)}
-            >
-              <FadeInText
-                style={{ fontSize: 28, textAlign: "center", margin: 10 }}
-              >
-                ←
-              </FadeInText>
-            </TouchableOpacity>
-          </View> */}
-          {/* <View style={styles.nextButtonView}>
-            <TouchableOpacity
-              style={[styles.nextButton]}
-              onPress={() => setIndex(index + numWidth)}
-            >
-              <FadeInText
-                style={{ fontSize: 28, textAlign: "center", margin: 10 }}
-              >
-                →
-              </FadeInText> 
-            </TouchableOpacity>
-          </View>*/}
+          <InputStyle isLapped={isLapped} inputValue={inputValue} />
         </View>
       </View>
     </SafeAreaView>
