@@ -82,9 +82,37 @@ const FadeInText = (props) => {
 };
 
 const numWidth = 3;
+
+pad = function (text, length) {
+  text = text || "";
+  var output = text.toString();
+
+  while (output.length < length) {
+    output = output + "_";
+  }
+
+  return output;
+};
+
 const memrise = () => {
   const [index, setIndex] = useState(numWidth);
   const [inputValue, setInputValue] = useState("");
+  const [displayedValue, setDisplayedValue] = useState("");
+
+  paddedIncrement = function (text) {
+    text = text.toString();
+
+    var input = text,
+      display;
+
+    if (text.length > numWidth) {
+      input = text.substring(numWidth, numWidth + 1);
+    }
+    display = pad(input, numWidth);
+
+    setInputValue(input);
+    setDisplayedValue(display);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,16 +130,20 @@ const memrise = () => {
       <View style={styles.body}>
         <View style={styles.digitsRow}>
           <PreviousDigit digit={index - numWidth} />
-          <MainDigit digit={index} text={inputValue} style={styles.mainDigit} />
+          <MainDigit
+            digit={index}
+            text={displayedValue}
+            style={styles.mainDigit}
+          />
         </View>
         <View style={styles.buttonRow}>
           <TextInput
             autoFocus
             style={styles.invisible}
-            onChangeText={(text) => setInputValue(text)}
+            onChangeText={(text) => paddedIncrement(text)}
             editable
-            maxLength={3}
             keyboardType="numeric"
+            value={inputValue}
           />
           {/* <View style={styles.nextButtonView}>
             <TouchableOpacity
