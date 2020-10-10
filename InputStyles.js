@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   PixelRatio,
@@ -37,6 +37,7 @@ const NextPrevButtons = function (props) {
       }}
     >
       <View style={styles.nextButtonView}>
+        {/* Thinking of no onLongPress so that someone can try in their head first, then see if they are right. */}
         <TouchableOpacity style={[styles.prevButton]} onPress={props.decrement}>
           <FadeInText style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
             ←
@@ -52,19 +53,6 @@ const NextPrevButtons = function (props) {
       </View>
     </View>
   );
-
-  return (
-    <View>
-      <View style={styles.nextButtonView}>
-        <TouchableOpacity onPress={props.increment}>
-          <Text style={{ backgroundColor: "red" }}>Hi</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-  {
-    /*  */
-  }
 };
 
 export const InputStyle = function (props) {

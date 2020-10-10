@@ -1,4 +1,4 @@
-import React, { useState, setState, useRef } from "react";
+import React, { useState, setState, useRef, useEffect } from "react";
 import {
   Text,
   View,
@@ -15,6 +15,7 @@ import {
 import { FadeInText } from "./AnimatedComponents";
 import { InputStyle } from "./InputStyles";
 import { PreviousDigit, MainDigit } from "./DigitView";
+const pi = require("./pi.json").value;
 
 const numWidth = 3;
 
@@ -36,82 +37,109 @@ const rehearseColor = "blue",
 const memrise = () => {
   const [index, setIndex] = useState(numWidth);
   const [inputValue, setInputValue] = useState("");
-  const [displayedValue, setDisplayedValue] = useState("");
-  const [isLapped, setLapped] = useState(false);
+  const [displayedValue, setDisplayedValue] = useState(undefined);
+  const [reciting, setReciting] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState(rehearseColor);
 
-  resetGame = function (lapped) {
-    paddedIncrement("reset");
-    if (!isLapped) {
-      setIndex(numWidth);
-    } else {
-      setIndex(0);
+  resetGame = function (resetScore, reciter) {
+    setInputValue("");
+    console.log("resetting" + reciting + reciter);
+    if (resetScore) {
+      reciter ? setIndex(0) : setIndex(numWidth);
+    }
+    if (reciter) {
+      console.log("Removing Text");
+      setDisplayedValue(undefined);
     }
   };
 
-  toggleMode = function () {
-    setLapped(!isLapped);
-    resetColor();
-    resetGame();
-  };
-
   resetColor = function () {
-    if (isLapped) {
+    if (reciting) {
       setBackgroundColor(reciteColor);
     } else {
       setBackgroundColor(rehearseColor);
     }
   };
 
-  incrementIndex = function (amount) {
+  toggleMode = function (resetScore) {
+    var temp = !reciting;
+    setReciting(temp);
+    resetGame(resetScore, temp);
+    resetColor();
+  };
+
+  useEffect(() => {
+    resetColor();
+  });
+
+  incrementIndex = function () {
     return function () {
-      setIndex(index + amount);
+      if (displayedValue != undefined) {
+        setDisplayedValue(undefined);
+      }
+      let temp = index + numWidth;
+      setIndex(temp - (temp % numWidth));
     };
   };
 
-  decrementIndex = function (amount) {
+  decrementIndex = function () {
     return function () {
-      if (index - amount > 0) {
-        setIndex(index - amount);
+      if (displayedValue != undefined) {
+        setDisplayedValue(undefined);
+      }
+      if (index - numWidth > 0) {
+        setIndex(index - numWidth);
       }
     };
   };
 
-  //called when number entered
-  paddedIncrement = function (text) {
-    if (text == "reset") {
-      setIndex(0);
-      setInputValue("");
-      setDisplayedValue(undefined);
-      return;
-    }
-    var input = text.toString().replace(/[^0-9]/g, "");
-
-    if (input == text.toString()) {
-      setIndex(index + 1);
-    }
+  function score(input) {
+    setIndex(index + 1); //add a score
 
     var display;
-    if (input.length > numWidth) {
-      //truncate
-      input = text.substring(numWidth, numWidth + 1);
-    }
     display = pad(input, numWidth);
 
     setInputValue(input);
     setDisplayedValue(display);
+  }
+
+  failed = function () {
+    setInputValue("");
+    //setDisplayedValue(undefined);
+    toggleMode(false);
+    console.log("returning with index = " + index);
+  };
+
+  //called when number entered
+  validateText = function (text) {
+    text = text.toString();
+    var input = text.replace(/[^0-9]/g, "");
+    //if we didn't replaced any numbers by the statement above
+    if (input != text) {
+      return;
+    } else if (input.slice(-1) != pi[index]) {
+      //bad new character
+      failed();
+      return;
+    } else {
+      if (input.length > numWidth) {
+        //truncate
+        input = text.substring(numWidth, numWidth + 1);
+      }
+      score(input);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.score}>
         <Text style={styles.score}>
-          {isLapped ? "High-Score: " : "Score: "} {index}
+          {reciting ? "High-Score: " : "Digit: "} {index}
         </Text>
         <TouchableOpacity
           style={[styles.prevButton, { backgroundColor: backgroundColor }]}
-          onPress={() => resetGame()}
-          onLongPress={() => toggleMode()}
+          onPress={() => resetGame(true, true)}
+          onLongPress={() => toggleMode(true)}
         >
           <FadeInText style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
             RESET
@@ -131,11 +159,11 @@ const memrise = () => {
         </View>
         <View style={styles.buttonRow}>
           <InputStyle
-            isLapped={isLapped}
+            isLapped={reciting}
             inputValue={inputValue}
-            onNumberChange={paddedIncrement}
-            increment={incrementIndex(numWidth)}
-            decrement={decrementIndex(numWidth)}
+            onNumberChange={validateText}
+            increment={incrementIndex()}
+            decrement={decrementIndex()}
             background={"yellow"}
           />
         </View>
