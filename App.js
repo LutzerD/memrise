@@ -3,13 +3,10 @@ import {
   Text,
   View,
   PixelRatio,
-  Button,
-  Dimensions,
-  TextInput,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  Animated,
+  AsyncStorage,
 } from "react-native";
 
 import { FadeInText } from "./AnimatedComponents";
@@ -41,16 +38,40 @@ const memrise = () => {
   const [reciting, setReciting] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState(rehearseColor);
   const [failedIndex, setFailedIndex] = useState(undefined);
+  const [highScore, setHighScore] = useState(0);
+
+  _storeData = async (key, value) => {
+    if (!key && !value) return;
+    console.log("Storing " + value + " at " + key);
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (error) {
+      // Error saving data
+      console.log("Error Saving: " + error);
+    }
+  };
+
+  getHighscore = async () => {
+    try {
+      const value = await AsyncStorage.getItem("highscore");
+
+      if (value !== null && !value.includes("object Undefined")) {
+        console.log("Got hs: " + value);
+        setHighScore(value);
+      }
+    } catch (error) {
+      // Error retrieving data
+      console.log("Error Retrieving: " + error);
+    }
+  };
 
   resetGame = function (resetScore, reciter) {
     setInputValue("");
-    console.log("resetting" + reciting + reciter);
     if (resetScore) {
       reciter ? setIndex(0) : setIndex(numWidth);
       setFailedIndex(undefined);
     }
     if (reciter) {
-      console.log("Removing Text");
       setDisplayedValue(undefined);
     }
   };
@@ -64,6 +85,10 @@ const memrise = () => {
   };
 
   toggleMode = function (resetScore) {
+    if (!highScore) {
+      getHighscore();
+    }
+
     var temp = !reciting;
     setReciting(temp);
     resetGame(resetScore, temp);
@@ -103,6 +128,10 @@ const memrise = () => {
 
     setInputValue(input);
     setDisplayedValue(display);
+    console.log("index, score " + index + "," + highScore);
+    if (index > highScore) {
+      _storeData("highscore", "" + index);
+    }
   }
 
   failed = function () {
@@ -134,9 +163,12 @@ const memrise = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.score}>
+      <View style={[styles.score, { flexDirection: "column" }]}>
         <Text style={styles.score}>
-          {reciting ? "High-Score: " : "Digit: "} {index}
+          {reciting && highScore ? "High-Score: " + highScore : ""}
+        </Text>
+        <Text style={styles.score}>
+          {reciting ? "Score: " : "Digit: "} {index}
         </Text>
         <TouchableOpacity
           style={[styles.prevButton, { backgroundColor: backgroundColor }]}
