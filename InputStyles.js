@@ -25,8 +25,6 @@ const NumberInput = function (props) {
 };
 //←
 const NextPrevButtons = function (props) {
-  const [ioio, setInputValue] = useState("");
-
   return (
     <View
       style={{

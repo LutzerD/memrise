@@ -40,12 +40,14 @@ const memrise = () => {
   const [displayedValue, setDisplayedValue] = useState(undefined);
   const [reciting, setReciting] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState(rehearseColor);
+  const [failedIndex, setFailedIndex] = useState(undefined);
 
   resetGame = function (resetScore, reciter) {
     setInputValue("");
     console.log("resetting" + reciting + reciter);
     if (resetScore) {
       reciter ? setIndex(0) : setIndex(numWidth);
+      setFailedIndex(undefined);
     }
     if (reciter) {
       console.log("Removing Text");
@@ -104,21 +106,21 @@ const memrise = () => {
   }
 
   failed = function () {
+    setFailedIndex(index);
     setInputValue("");
-    //setDisplayedValue(undefined);
     toggleMode(false);
-    console.log("returning with index = " + index);
   };
 
   //called when number entered
   validateText = function (text) {
     text = text.toString();
     var input = text.replace(/[^0-9]/g, "");
-    //if we didn't replaced any numbers by the statement above
+
     if (input != text) {
+      //if they entered a non numeric character, skip
       return;
     } else if (input.slice(-1) != pi[index]) {
-      //bad new character
+      //Wrong new character
       failed();
       return;
     } else {
@@ -150,11 +152,13 @@ const memrise = () => {
         <View style={styles.digitsRow}>
           <PreviousDigit
             digit={Math.floor(index - 1 - ((index - 1) % numWidth))}
+            failedDigit={failedIndex}
           />
           <MainDigit
             digit={index}
             text={displayedValue}
             style={styles.mainDigit}
+            failedDigit={failedIndex}
           />
         </View>
         <View style={styles.buttonRow}>
@@ -164,7 +168,7 @@ const memrise = () => {
             onNumberChange={validateText}
             increment={incrementIndex()}
             decrement={decrementIndex()}
-            background={"yellow"}
+            background={"green"}
           />
         </View>
       </View>

@@ -25,7 +25,16 @@ export const PreviousDigit = (props) => {
   return (
     <View style={styles.row}>
       {val.split("").map((char, i) => (
-        <StackedDigits digitStyle={styles.pd} char={char} key={i} />
+        <StackedDigits
+          digitStyle={[
+            styles.pd,
+            props.failedDigit == props.digit - numWidth + i
+              ? styles.failedStyle
+              : {},
+          ]}
+          char={char}
+          key={i}
+        />
       ))}
     </View>
   );
@@ -47,7 +56,16 @@ export const MainDigit = (props) => {
   const a = (
     <View style={styles.row}>
       {digits.split("").map((char, i) => (
-        <StackedDigits digitStyle={styles.mainDigit} char={char} key={i} />
+        <StackedDigits
+          digitStyle={[
+            styles.mainDigit,
+            props.failedDigit == props.digit + i - numWidth
+              ? styles.failedStyle
+              : {},
+          ]}
+          char={char}
+          key={i}
+        />
       ))}
     </View>
   );
@@ -92,6 +110,9 @@ const styles = StyleSheet.create({
   outlined: {
     borderRightColor: "red",
     borderRightWidth: StyleSheet.hairlineWidth,
+  },
+  failedStyle: {
+    backgroundColor: "white",
   },
   digitsRow: {
     flexDirection: "row",
