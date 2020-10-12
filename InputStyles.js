@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Component } from "react";
 import {
   View,
   PixelRatio,
@@ -7,59 +7,97 @@ import {
   Button,
   Text,
   TouchableOpacity,
+  Keyboard,
 } from "react-native";
 import { FadeInText } from "./AnimatedComponents";
 
-const NumberInput = function (props) {
-  var inputValue = props.inputValue;
-  return (
-    <TextInput
-      autoFocus
-      style={styles.invisible}
-      onChangeText={(text) => props.onNumberChange(text)}
-      editable
-      keyboardType="numeric"
-      value={inputValue}
-    />
-  );
-};
-//←
-const NextPrevButtons = function (props) {
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
-      <View style={styles.nextButtonView}>
-        {/* Thinking of no onLongPress so that someone can try in their head first, then see if they are right. */}
-        <TouchableOpacity style={[styles.prevButton]} onPress={props.decrement}>
-          <FadeInText style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
-            ←
-          </FadeInText>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.nextButtonView}>
-        <TouchableOpacity style={[styles.nextButton]} onPress={props.increment}>
-          <FadeInText style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
-            →
-          </FadeInText>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
-
-export const InputStyle = function (props) {
-  if (props.isLapped) {
-    return NumberInput(props);
-  } else {
-    return NextPrevButtons(props);
+var _this;
+export class InputStyle extends Component {
+  constructor(props) {
+    super(props);
+    this.btnRef = React.createRef();
+    _this = this;
   }
-};
+
+  componentDidMount() {
+    this.keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      this._keyboardDidShow
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      this._keyboardDidHide
+    );
+  }
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow() {}
+
+  _keyboardDidHide() {
+    if (_this.btnRef.current) {
+      _this.btnRef.current.focus();
+    }
+  }
+
+  render() {
+    if (this.props.isLapped) {
+      return (
+        <TextInput
+          autoFocus
+          style={styles.invisible}
+          onChangeText={(text) => this.props.onNumberChange(text)}
+          editable
+          keyboardType="numeric"
+          value={this.props.inputValue}
+          ref={this.btnRef}
+          onBlur={Keyboard.dismiss}
+          blurOnSubmit={false}
+        />
+      );
+    } else {
+      return (
+        <View
+          style={{
+            flexDirection: "row",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <View style={styles.nextButtonView}>
+            {/* Thinking of no onLongPress so that someone can try in their head first, then see if they are right. */}
+            <TouchableOpacity
+              style={[styles.prevButton]}
+              onPress={this.props.decrement}
+            >
+              <FadeInText
+                style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+              >
+                ←
+              </FadeInText>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.nextButtonView}>
+            <TouchableOpacity
+              style={[styles.nextButton]}
+              onPress={this.props.increment}
+            >
+              <FadeInText
+                style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+              >
+                →
+              </FadeInText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+  }
+}
 
 const styles = StyleSheet.create({
   container: {

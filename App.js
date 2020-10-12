@@ -201,7 +201,7 @@ const memrise = () => {
             increment={incrementIndex()}
             decrement={decrementIndex()}
             background={"green"}
-          />
+          ></InputStyle>
         </View>
       </View>
     </SafeAreaView>
