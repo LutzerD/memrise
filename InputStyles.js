@@ -12,6 +12,11 @@ import {
 import { FadeInText } from "./AnimatedComponents";
 
 var _this;
+var hiddenStyle = { display: "none" };
+function hideStyle() {
+  return hiddenStyle;
+}
+
 export class InputStyle extends Component {
   constructor(props) {
     super(props);
@@ -35,28 +40,48 @@ export class InputStyle extends Component {
     this.keyboardDidHideListener.remove();
   }
 
-  _keyboardDidShow() {}
+  _keyboardDidShow() {
+    hiddenStyle.display = "none";
+    console.log("Refreshed?");
+  }
 
   _keyboardDidHide() {
+    hiddenStyle.display = "flex";
+
     if (_this.btnRef.current) {
       _this.btnRef.current.focus();
     }
+
+    console.log("Closed");
   }
 
   render() {
     if (this.props.isLapped) {
       return (
-        <TextInput
-          autoFocus
-          style={styles.invisible}
-          onChangeText={(text) => this.props.onNumberChange(text)}
-          editable
-          keyboardType="numeric"
-          value={this.props.inputValue}
-          ref={this.btnRef}
-          onBlur={Keyboard.dismiss}
-          blurOnSubmit={false}
-        />
+        <View>
+          <TextInput
+            autoFocus
+            style={styles.invisible}
+            onChangeText={(text) => this.props.onNumberChange(text)}
+            editable
+            keyboardType="numeric"
+            value={this.props.inputValue}
+            ref={this.btnRef}
+            onBlur={Keyboard.dismiss}
+            blurOnSubmit={false}
+          />
+          <TouchableOpacity
+            style={[styles.hidden, hideStyle()]}
+            onPress={() => {
+              this.btnRef.current.blur();
+              this.btnRef.current.focus();
+            }}
+          >
+            <Text style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
+              Open Keyboard
+            </Text>
+          </TouchableOpacity>
+        </View>
       );
     } else {
       return (
