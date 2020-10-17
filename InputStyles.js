@@ -62,14 +62,37 @@ export const InputStyle = (props) => {
   if (props.reciting) {
     if (!isKeyboardVisible) {
       return (
-        <View>
+        <View
+          style={{
+            flexDirection: "row",
+            flex: 1,
+            alignItems: "stretch",
+            justifyContent: "center",
+          }}
+        >
           <TouchableOpacity
-            style={[styles.hidden]}
+            style={{
+              flexDirection: "row",
+              flex: 1,
+              alignItems: "stretch",
+              justifyContent: "center",
+            }}
             onPress={() => {
               setKeyboardVisible(true);
             }}
           >
-            <Text style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
+            <Text
+              style={{
+                fontSize: 28,
+                textAlign: "center",
+                margin: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                height: 60,
+                width: "80%",
+                backgroundColor: "yellow",
+              }}
+            >
               Open Keyboard
             </Text>
           </TouchableOpacity>
@@ -171,9 +194,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flex: 1,
   },
+  keyboardOpenButton: {
+    fontSize: 28,
+    textAlign: "center",
+    margin: 10,
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+    height: 60,
+  },
   button: {
     textAlign: "center",
-
     textAlignVertical: "center",
   },
   arrowText: {
