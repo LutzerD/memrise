@@ -195,7 +195,7 @@ const memrise = () => {
         </View>
         <View style={styles.buttonRow}>
           <InputStyle
-            isLapped={reciting}
+            reciting={reciting}
             inputValue={inputValue}
             onNumberChange={validateText}
             increment={incrementIndex()}

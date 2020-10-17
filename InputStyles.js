@@ -8,73 +8,65 @@ import {
   Text,
   TouchableOpacity,
   Keyboard,
+  ImagePropTypes,
 } from "react-native";
 import { FadeInText } from "./AnimatedComponents";
 
 var _this;
-var hiddenStyle = { display: "none" };
-function hideStyle() {
-  return hiddenStyle;
-}
 
-export class InputStyle extends Component {
-  constructor(props) {
-    super(props);
-    this.btnRef = React.createRef();
-    _this = this;
-  }
-
-  componentDidMount() {
-    this.keyboardDidShowListener = Keyboard.addListener(
+const WatchedKeyboard = (props) => {
+  const setKeyboardVisible = props.setKeyboardVisible;
+  console.log(props);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      this._keyboardDidShow
+      () => {
+        props.setKeyboardVisible(true); // or some other action
+      }
     );
-    this.keyboardDidHideListener = Keyboard.addListener(
+    const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
-      this._keyboardDidHide
+      () => {
+        props.setKeyboardVisible(false); // or some other action
+      }
     );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
+  return (
+    <TextInput
+      autoFocus
+      style={styles.invisible}
+      onChangeText={(text) => props.onNumberChange(text)}
+      editable
+      keyboardType="numeric"
+      value={props.inputValue}
+      onBlur={Keyboard.dismiss}
+      blurOnSubmit={false}
+    />
+  );
+};
+
+export const InputStyle = (props) => {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  function keyboardVisibility(value) {
+    setKeyboardVisible(value);
+    console.log("Set kb to " + value);
   }
 
-  componentWillUnmount() {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
-  }
-
-  _keyboardDidShow() {
-    hiddenStyle.display = "none";
-    console.log("Refreshed?");
-  }
-
-  _keyboardDidHide() {
-    hiddenStyle.display = "flex";
-
-    if (_this.btnRef.current) {
-      _this.btnRef.current.focus();
-    }
-
-    console.log("Closed");
-  }
-
-  render() {
-    if (this.props.isLapped) {
+  if (props.reciting) {
+    if (!isKeyboardVisible) {
       return (
         <View>
-          <TextInput
-            autoFocus
-            style={styles.invisible}
-            onChangeText={(text) => this.props.onNumberChange(text)}
-            editable
-            keyboardType="numeric"
-            value={this.props.inputValue}
-            ref={this.btnRef}
-            onBlur={Keyboard.dismiss}
-            blurOnSubmit={false}
-          />
           <TouchableOpacity
-            style={[styles.hidden, hideStyle()]}
+            style={[styles.hidden]}
             onPress={() => {
-              this.btnRef.current.blur();
-              this.btnRef.current.focus();
+              setKeyboardVisible(true);
             }}
           >
             <Text style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
@@ -85,44 +77,54 @@ export class InputStyle extends Component {
       );
     } else {
       return (
-        <View
-          style={{
-            flexDirection: "row",
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <View style={styles.nextButtonView}>
-            {/* Thinking of no onLongPress so that someone can try in their head first, then see if they are right. */}
-            <TouchableOpacity
-              style={[styles.prevButton]}
-              onPress={this.props.decrement}
-            >
-              <FadeInText
-                style={{ fontSize: 28, textAlign: "center", margin: 10 }}
-              >
-                ←
-              </FadeInText>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.nextButtonView}>
-            <TouchableOpacity
-              style={[styles.nextButton]}
-              onPress={this.props.increment}
-            >
-              <FadeInText
-                style={{ fontSize: 28, textAlign: "center", margin: 10 }}
-              >
-                →
-              </FadeInText>
-            </TouchableOpacity>
-          </View>
+        <View>
+          <WatchedKeyboard
+            inputValue={props.inputValue}
+            onNumberChange={props.onNumberChange}
+            setKeyboardVisible={keyboardVisibility}
+          />
         </View>
       );
     }
+  } else {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <View style={styles.nextButtonView}>
+          {/* Thinking of no onLongPress so that someone can try in their head first, then see if they are right. */}
+          <TouchableOpacity
+            style={[styles.prevButton]}
+            onPress={props.decrement}
+          >
+            <FadeInText
+              style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+            >
+              ←
+            </FadeInText>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.nextButtonView}>
+          <TouchableOpacity
+            style={[styles.nextButton]}
+            onPress={props.increment}
+          >
+            <FadeInText
+              style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+            >
+              →
+            </FadeInText>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
   }
-}
+};
 
 const styles = StyleSheet.create({
   container: {
