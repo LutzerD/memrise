@@ -8,6 +8,9 @@ import {
   TouchableOpacity,
   AsyncStorage,
 } from "react-native";
+import GestureRecognizer, {
+  swipeDirections,
+} from "react-native-swipe-gestures";
 
 import { FadeInText } from "./AnimatedComponents";
 import { InputStyle } from "./InputStyles";
@@ -30,6 +33,11 @@ pad = function (text, length) {
 
 const rehearseColor = "blue",
   reciteColor = "red";
+
+const config = {
+  velocityThreshold: 0.3,
+  directionalOffsetThreshold: 80,
+};
 
 const memrise = () => {
   const [index, setIndex] = useState(numWidth);
@@ -99,26 +107,22 @@ const memrise = () => {
     resetColor();
   });
 
-  incrementIndex = function () {
-    return function () {
-      if (displayedValue != undefined) {
-        setDisplayedValue(undefined);
-      }
-      let temp = index + numWidth;
-      setIndex(temp - (temp % numWidth));
-    };
-  };
+  function incrementIndex() {
+    if (displayedValue != undefined) {
+      setDisplayedValue(undefined);
+    }
+    let temp = index + numWidth;
+    setIndex(temp - (temp % numWidth));
+  }
 
-  decrementIndex = function () {
-    return function () {
-      if (displayedValue != undefined) {
-        setDisplayedValue(undefined);
-      }
-      if (index - numWidth > 0) {
-        setIndex(index - numWidth);
-      }
-    };
-  };
+  function decrementIndex() {
+    if (displayedValue != undefined) {
+      setDisplayedValue(undefined);
+    }
+    if (index - numWidth > 0) {
+      setIndex(index - numWidth);
+    }
+  }
 
   function score(input) {
     setIndex(index + 1); //add a score
@@ -138,6 +142,18 @@ const memrise = () => {
     setFailedIndex(index);
     setInputValue("");
     toggleMode(false);
+  };
+
+  onSwipeLeft = function (state) {
+    if (!reciting) {
+      incrementIndex();
+    }
+  };
+
+  onSwipeRight = function (state) {
+    if (!reciting) {
+      decrementIndex();
+    }
   };
 
   //called when number entered
@@ -163,47 +179,56 @@ const memrise = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={[styles.score, { flexDirection: "column" }]}>
-        <Text style={styles.score}>
-          {reciting && highScore ? "High-Score: " + highScore : ""}
-        </Text>
-        <Text style={styles.score}>
-          {reciting ? "Score: " : "Digit: "} {index}
-        </Text>
-        <TouchableOpacity
-          style={[styles.prevButton, { backgroundColor: backgroundColor }]}
-          onPress={() => resetGame(true, true)}
-          onLongPress={() => toggleMode(true)}
-        >
-          <FadeInText style={{ fontSize: 28, textAlign: "center", margin: 10 }}>
-            RESET
-          </FadeInText>
-        </TouchableOpacity>
-      </View>
-      <View style={[styles.body, { backgroundColor: backgroundColor }]}>
-        <View style={styles.digitsRow}>
-          <PreviousDigit
-            digit={Math.floor(index - 1 - ((index - 1) % numWidth))}
-            failedDigit={failedIndex}
-          />
-          <MainDigit
-            digit={index}
-            text={displayedValue}
-            style={styles.mainDigit}
-            failedDigit={failedIndex}
-          />
+      <GestureRecognizer
+        style={{ flex: 1 }}
+        onSwipeLeft={(state) => onSwipeLeft(state)}
+        onSwipeRight={(state) => onSwipeRight(state)}
+        config={config}
+      >
+        <View style={[styles.score, { flexDirection: "column" }]}>
+          <Text style={styles.score}>
+            {reciting && highScore ? "High-Score: " + highScore : ""}
+          </Text>
+          <Text style={styles.score}>
+            {reciting ? "Score: " : "Digit: "} {index}
+          </Text>
+          <TouchableOpacity
+            style={[styles.prevButton, { backgroundColor: backgroundColor }]}
+            onPress={() => resetGame(true, true)}
+            onLongPress={() => toggleMode(true)}
+          >
+            <FadeInText
+              style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+            >
+              RESET
+            </FadeInText>
+          </TouchableOpacity>
         </View>
-        <View style={styles.buttonRow}>
-          <InputStyle
-            reciting={reciting}
-            inputValue={inputValue}
-            onNumberChange={validateText}
-            increment={incrementIndex()}
-            decrement={decrementIndex()}
-            background={"green"}
-          ></InputStyle>
+        <View style={[styles.body, { backgroundColor: backgroundColor }]}>
+          <View style={styles.digitsRow}>
+            <PreviousDigit
+              digit={Math.floor(index - 1 - ((index - 1) % numWidth))}
+              failedDigit={failedIndex}
+            />
+            <MainDigit
+              digit={index}
+              text={displayedValue}
+              style={styles.mainDigit}
+              failedDigit={failedIndex}
+            />
+          </View>
+          <View style={styles.buttonRow}>
+            <InputStyle
+              reciting={reciting}
+              inputValue={inputValue}
+              onNumberChange={validateText}
+              increment={incrementIndex}
+              decrement={decrementIndex}
+              background={"green"}
+            ></InputStyle>
+          </View>
         </View>
-      </View>
+      </GestureRecognizer>
     </SafeAreaView>
   );
 };
