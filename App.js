@@ -2,11 +2,11 @@ import React, { useState, setState, useRef, useEffect } from "react";
 import {
   Text,
   View,
-  PixelRatio,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
   AsyncStorage,
+  PixelRatio,
 } from "react-native";
 import GestureRecognizer, {
   swipeDirections,
@@ -15,8 +15,8 @@ import GestureRecognizer, {
 import { FadeInText } from "./AnimatedComponents";
 import { InputStyle } from "./InputStyles";
 import { PreviousDigit, MainDigit } from "./DigitView";
+import { normalizeFont } from "./utilities";
 const pi = require("./pi.json").value;
-
 const numWidth = 3;
 
 pad = function (text, length) {
@@ -198,7 +198,11 @@ const memrise = () => {
             onLongPress={() => toggleMode(true)}
           >
             <FadeInText
-              style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+              style={{
+                fontSize: normalizeFont(28),
+                textAlign: "center",
+                margin: 10,
+              }}
             >
               RESET
             </FadeInText>
@@ -242,7 +246,7 @@ const styles = StyleSheet.create({
   },
   score: {
     alignItems: "center",
-    fontSize: 10 * PixelRatio.get(),
+    fontSize: normalizeFont(20),
   },
   col: {
     flexDirection: "column",
@@ -286,7 +290,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
   },
   arrowText: {
-    fontSize: 50 * PixelRatio.get(),
+    fontSize: normalizeFont(50),
     textAlignVertical: "center",
     textAlign: "center",
   },
@@ -301,13 +305,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
   },
-  majorSystem: {
-    fontSize: 10 * PixelRatio.get(),
-  },
   pd: {
-    fontSize: 20 * PixelRatio.get(),
+    fontSize: normalizeFont(20),
   },
   mainDigit: {
-    fontSize: 40 * PixelRatio.get(),
+    fontSize: normalizeFont(40),
   },
 });

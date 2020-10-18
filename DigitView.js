@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, View, PixelRatio, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, PixelRatio } from "react-native";
+import { normalizeFont } from "./utilities";
 
 const MajorSystem = {
   0: "s,z",
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
   },
   score: {
     alignItems: "center",
-    fontSize: 10 * PixelRatio.get(),
+    fontSize: normalizeFont(10),
   },
   col: {
     flexDirection: "column",
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
   },
   arrowText: {
-    fontSize: 50 * PixelRatio.get(),
+    fontSize: normalizeFont(50),
     textAlignVertical: "center",
     textAlign: "center",
   },
@@ -142,12 +143,12 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   majorSystem: {
-    fontSize: 10 * PixelRatio.get(),
+    fontSize: normalizeFont(20),
   },
   pd: {
-    fontSize: 20 * PixelRatio.get(),
+    fontSize: normalizeFont(30),
   },
   mainDigit: {
-    fontSize: 40 * PixelRatio.get(),
+    fontSize: normalizeFont(70),
   },
 });

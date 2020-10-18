@@ -1,16 +1,18 @@
 import React, { useState, useEffect, Component } from "react";
 import {
   View,
-  PixelRatio,
   TextInput,
   StyleSheet,
   Button,
   Text,
   TouchableOpacity,
   Keyboard,
+  PixelRatio,
   ImagePropTypes,
 } from "react-native";
 import { FadeInText } from "./AnimatedComponents";
+
+import { normalizeFont } from "./utilities";
 
 var _this;
 
@@ -126,7 +128,11 @@ export const InputStyle = (props) => {
             onPress={props.decrement}
           >
             <FadeInText
-              style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+              style={{
+                fontSize: normalizeFont(35),
+                textAlign: "center",
+                margin: 10,
+              }}
             >
               ←
             </FadeInText>
@@ -138,7 +144,11 @@ export const InputStyle = (props) => {
             onPress={props.increment}
           >
             <FadeInText
-              style={{ fontSize: 28, textAlign: "center", margin: 10 }}
+              style={{
+                fontSize: normalizeFont(35),
+                textAlign: "center",
+                margin: 10,
+              }}
             >
               →
             </FadeInText>
