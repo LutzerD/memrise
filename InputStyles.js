@@ -10,7 +10,6 @@ import {
   PixelRatio,
   ImagePropTypes,
 } from "react-native";
-import { FadeInText } from "./AnimatedComponents";
 
 import { normalizeFont } from "./utilities";
 
@@ -54,7 +53,7 @@ const WatchedKeyboard = (props) => {
 };
 
 export const InputStyle = (props) => {
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(true);
 
   function keyboardVisibility(value) {
     setKeyboardVisible(value);
@@ -127,7 +126,7 @@ export const InputStyle = (props) => {
             style={[styles.prevButton]}
             onPress={props.decrement}
           >
-            <FadeInText
+            <Text
               style={{
                 fontSize: normalizeFont(35),
                 textAlign: "center",
@@ -135,7 +134,7 @@ export const InputStyle = (props) => {
               }}
             >
               ←
-            </FadeInText>
+            </Text>
           </TouchableOpacity>
         </View>
         <View style={styles.nextButtonView}>
@@ -143,7 +142,7 @@ export const InputStyle = (props) => {
             style={[styles.nextButton]}
             onPress={props.increment}
           >
-            <FadeInText
+            <Text
               style={{
                 fontSize: normalizeFont(35),
                 textAlign: "center",
@@ -151,7 +150,7 @@ export const InputStyle = (props) => {
               }}
             >
               →
-            </FadeInText>
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

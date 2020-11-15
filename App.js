@@ -7,15 +7,17 @@ import {
   TouchableOpacity,
   AsyncStorage,
   PixelRatio,
+  Button,
 } from "react-native";
 import GestureRecognizer, {
   swipeDirections,
 } from "react-native-swipe-gestures";
+import { Icon } from "react-native-elements";
 
-import { FadeInText } from "./AnimatedComponents";
 import { InputStyle } from "./InputStyles";
 import { PreviousDigit, MainDigit } from "./DigitView";
 import { normalizeFont } from "./utilities";
+import { Reddit } from "@material-ui/icons";
 const pi = require("./pi.json").value;
 const numWidth = 3;
 
@@ -179,6 +181,10 @@ const memrise = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View>
+        {/* <Icon name="build" /> */}
+        <Button icon={<Icon name="build" />} title="" />
+      </View>
       <GestureRecognizer
         style={{ flex: 1 }}
         onSwipeLeft={(state) => onSwipeLeft(state)}
@@ -192,21 +198,47 @@ const memrise = () => {
           <Text style={styles.score}>
             {reciting ? "Score: " : "Digit: "} {index}
           </Text>
-          <TouchableOpacity
-            style={[styles.prevButton, { backgroundColor: backgroundColor }]}
-            onPress={() => resetGame(true, true)}
-            onLongPress={() => toggleMode(true)}
+          <View
+            style={[
+              styles.score,
+              { flexDirection: "row", margin: 1, padding: 1 },
+            ]}
           >
-            <FadeInText
-              style={{
-                fontSize: normalizeFont(28),
-                textAlign: "center",
-                margin: 10,
-              }}
+            <TouchableOpacity
+              style={[
+                styles.prevButton,
+                { backgroundColor: backgroundColor, margin: 1 },
+              ]}
+              onPress={() => resetGame(true, true)}
             >
-              RESET
-            </FadeInText>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: normalizeFont(28),
+                  textAlign: "center",
+                  margin: 10,
+                }}
+              >
+                RESET
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.prevButton,
+                { backgroundColor: backgroundColor, margin: 1 },
+              ]}
+              onPress={() => toggleMode(true)}
+            >
+              <Text
+                style={{
+                  fontSize: normalizeFont(28),
+                  textAlign: "center",
+                  margin: 10,
+                }}
+              >
+                MODE
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={[styles.body, { backgroundColor: backgroundColor }]}>
           <View style={styles.digitsRow}>
