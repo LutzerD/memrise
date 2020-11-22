@@ -7,20 +7,18 @@ import {
   TouchableOpacity,
   AsyncStorage,
   PixelRatio,
-  Button,
 } from "react-native";
 import GestureRecognizer, {
   swipeDirections,
 } from "react-native-swipe-gestures";
-import { Icon } from "react-native-elements";
-
 import { InputStyle } from "./InputStyles";
 import { PreviousDigit, MainDigit } from "./DigitView";
 import { normalizeFont } from "./utilities";
 import { Reddit } from "@material-ui/icons";
 const pi = require("./pi.json").value;
 const numWidth = 3;
-
+import { Button } from "react-native-elements";
+import Icon from "react-native-vector-icons/FontAwesome";
 pad = function (text, length) {
   text = text || "";
 
@@ -183,7 +181,14 @@ const memrise = () => {
     <SafeAreaView style={styles.container}>
       <View>
         {/* <Icon name="build" /> */}
-        <Button icon={<Icon name="build" />} title="" />
+        <Button
+          buttonStyle={{
+            alignSelf: "flex-end",
+            padding: 5,
+          }}
+          icon={<Icon name="cog" size={15} color="white" />}
+          title=""
+        />
       </View>
       <GestureRecognizer
         style={{ flex: 1 }}
