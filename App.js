@@ -19,6 +19,8 @@ const pi = require("./pi.json").value;
 const numWidth = 3;
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { SettingsMenu } from "./SettingsMenu";
+
 pad = function (text, length) {
   text = text || "";
 
@@ -180,16 +182,9 @@ const memrise = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        {/* <Icon name="build" /> */}
-        <Button
-          buttonStyle={{
-            alignSelf: "flex-end",
-            padding: 5,
-          }}
-          icon={<Icon name="cog" size={15} color="white" />}
-          title=""
-        />
+        <SettingsMenu></SettingsMenu>
       </View>
+
       <GestureRecognizer
         style={{ flex: 1 }}
         onSwipeLeft={(state) => onSwipeLeft(state)}
