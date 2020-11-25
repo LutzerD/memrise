@@ -17,7 +17,6 @@ var _this;
 
 const WatchedKeyboard = (props) => {
   const setKeyboardVisible = props.setKeyboardVisible;
-  console.log(props);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -57,7 +56,6 @@ export const InputStyle = (props) => {
 
   function keyboardVisibility(value) {
     setKeyboardVisible(value);
-    console.log("Set kb to " + value);
   }
 
   if (props.reciting) {

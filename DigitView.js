@@ -27,6 +27,7 @@ export const PreviousDigit = (props) => {
     <View style={styles.row}>
       {val.split("").map((char, i) => (
         <StackedDigits
+          majorSystem={props.majorSystem}
           digitStyle={[
             styles.pd,
             props.failedDigit == props.digit - numWidth + i
@@ -42,12 +43,20 @@ export const PreviousDigit = (props) => {
 };
 
 const StackedDigits = (props) => {
-  return (
-    <View style={[styles.col, styles.outlined, styles.centered]}>
-      <Text style={styles.majorSystem}>{MajorSystem[props.char]}</Text>
-      <Text style={props.digitStyle}>{props.char}</Text>
-    </View>
-  );
+  if (props.majorSystem) {
+    return (
+      <View style={[styles.col, styles.outlined, styles.centered]}>
+        <Text style={styles.majorSystem}>{MajorSystem[props.char]}</Text>
+        <Text style={props.digitStyle}>{props.char}</Text>
+      </View>
+    );
+  } else {
+    return (
+      <View style={[styles.col, styles.outlined, styles.centered]}>
+        <Text style={props.digitStyle}>{props.char}</Text>
+      </View>
+    );
+  }
 };
 
 export const MainDigit = (props) => {
@@ -58,6 +67,7 @@ export const MainDigit = (props) => {
     <View style={styles.row}>
       {digits.split("").map((char, i) => (
         <StackedDigits
+          majorSystem={props.majorSystem}
           digitStyle={[
             styles.mainDigit,
             props.failedDigit == props.digit + i - numWidth

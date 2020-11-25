@@ -15,9 +15,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 
 export function SettingsMenu(props) {
   const [modalVisible, setModalVisible] = useState(props.ModalVisible || false);
-  const [majorSystem, setMajorSystem] = useState(false);
   const [isSelected, setSelection] = useState(false);
-
   return (
     <View>
       <Modal
@@ -45,24 +43,12 @@ export function SettingsMenu(props) {
             style={{
               flexDirection: "row",
               marginBottom: 20,
-            }}
-          >
-            <TextInput
-              style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-              keyboardType="number-pad"
-            />
-            <Text>Major System</Text>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              marginBottom: 20,
+              alignItems: "center",
             }}
           >
             <CheckBox
-              value={isSelected}
-              onValueChange={setSelection}
+              value={props.isChecked}
+              onValueChange={props.checked}
               style={styles.checkbox}
             />
             <Text>Major System</Text>

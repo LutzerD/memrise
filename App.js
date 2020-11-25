@@ -49,10 +49,10 @@ const memrise = () => {
   const [backgroundColor, setBackgroundColor] = useState(rehearseColor);
   const [failedIndex, setFailedIndex] = useState(undefined);
   const [highScore, setHighScore] = useState(0);
+  const [majorSystem, setMajorSystem] = useState(true);
 
   _storeData = async (key, value) => {
     if (!key && !value) return;
-    console.log("Storing " + value + " at " + key);
     try {
       await AsyncStorage.setItem(key, value);
     } catch (error) {
@@ -66,7 +66,6 @@ const memrise = () => {
       const value = await AsyncStorage.getItem("highscore");
 
       if (value !== null && !value.includes("object Undefined")) {
-        console.log("Got hs: " + value);
         setHighScore(value);
       }
     } catch (error) {
@@ -134,7 +133,6 @@ const memrise = () => {
 
     setInputValue(input);
     setDisplayedValue(display);
-    console.log("index, score " + index + "," + highScore);
     if (index > highScore) {
       _storeData("highscore", "" + index);
     }
@@ -158,6 +156,9 @@ const memrise = () => {
     }
   };
 
+  toggleMajorSystem = function (bool) {
+    setMajorSystem(bool);
+  };
   //called when number entered
   validateText = function (text) {
     text = text.toString();
@@ -182,7 +183,10 @@ const memrise = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <SettingsMenu></SettingsMenu>
+        <SettingsMenu
+          checked={toggleMajorSystem}
+          isChecked={majorSystem}
+        ></SettingsMenu>
       </View>
 
       <GestureRecognizer
@@ -245,12 +249,14 @@ const memrise = () => {
             <PreviousDigit
               digit={Math.floor(index - 1 - ((index - 1) % numWidth))}
               failedDigit={failedIndex}
+              majorSystem={majorSystem}
             />
             <MainDigit
               digit={index}
               text={displayedValue}
               style={styles.mainDigit}
               failedDigit={failedIndex}
+              majorSystem={majorSystem}
             />
           </View>
           <View style={styles.buttonRow}>
