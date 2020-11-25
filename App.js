@@ -5,21 +5,26 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  AsyncStorage,
   PixelRatio,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import GestureRecognizer, {
   swipeDirections,
 } from "react-native-swipe-gestures";
 import { InputStyle } from "./InputStyles";
 import { PreviousDigit, MainDigit } from "./DigitView";
 import { normalizeFont } from "./utilities";
-import { Reddit } from "@material-ui/icons";
+import { CompareSharp, Reddit } from "@material-ui/icons";
 const pi = require("./pi.json").value;
 const numWidth = 3;
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { SettingsMenu } from "./SettingsMenu";
+
+keys = {
+  majorSystem: "@major",
+};
 
 pad = function (text, length) {
   text = text || "";
@@ -41,6 +46,20 @@ const config = {
   directionalOffsetThreshold: 80,
 };
 
+//A 2.0 would be to run through all of keys and fill some initial object with each key's retrieved value
+// const initialMajorSystemState = _getData(keys.majorSystem);
+
+_getData = async (key, callback) => {
+  try {
+    const ww = await AsyncStorage.getItem(key);
+    if (callback) callback(ww);
+    else return ww;
+  } catch (error) {
+    console.log("Error Retrieving: " + error);
+    if (callback) callback(null);
+    else return null;
+  }
+};
 const memrise = () => {
   const [index, setIndex] = useState(numWidth);
   const [inputValue, setInputValue] = useState("");
@@ -49,7 +68,7 @@ const memrise = () => {
   const [backgroundColor, setBackgroundColor] = useState(rehearseColor);
   const [failedIndex, setFailedIndex] = useState(undefined);
   const [highScore, setHighScore] = useState(0);
-  const [majorSystem, setMajorSystem] = useState(true);
+  const [majorSystem, setMajorSystem] = useState(false);
 
   _storeData = async (key, value) => {
     if (!key && !value) return;
@@ -64,7 +83,6 @@ const memrise = () => {
   getHighscore = async () => {
     try {
       const value = await AsyncStorage.getItem("highscore");
-
       if (value !== null && !value.includes("object Undefined")) {
         setHighScore(value);
       }
@@ -157,8 +175,14 @@ const memrise = () => {
   };
 
   toggleMajorSystem = function (bool) {
+    _storeData("@major_system", bool === true ? "true" : "false");
     setMajorSystem(bool);
   };
+
+  _getData("@major_system", (ww) => {
+    setMajorSystem(ww === "true" ? true : false);
+  });
+
   //called when number entered
   validateText = function (text) {
     text = text.toString();

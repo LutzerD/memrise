@@ -39,7 +39,7 @@ const WatchedKeyboard = (props) => {
 
   return (
     <TextInput
-      autoFocus
+      autoFocus={true}
       style={styles.invisible}
       onChangeText={(text) => props.onNumberChange(text)}
       editable
