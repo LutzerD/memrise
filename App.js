@@ -80,16 +80,8 @@ const memrise = () => {
     }
   };
 
-  getHighscore = async () => {
-    try {
-      const value = await AsyncStorage.getItem("highscore");
-      if (value !== null && !value.includes("object Undefined")) {
-        setHighScore(value);
-      }
-    } catch (error) {
-      // Error retrieving data
-      console.log("Error Retrieving: " + error);
-    }
+  getHighscore = () => {
+    _getData("highscore", (value) => setHighScore(value));
   };
 
   resetGame = function (resetScore, reciter) {
@@ -112,9 +104,7 @@ const memrise = () => {
   };
 
   toggleMode = function (resetScore) {
-    if (!highScore) {
-      getHighscore();
-    }
+    getHighscore();
 
     var temp = !reciting;
     setReciting(temp);
@@ -148,11 +138,11 @@ const memrise = () => {
 
     var display;
     display = pad(input, numWidth);
-
     setInputValue(input);
     setDisplayedValue(display);
-    if (index > highScore) {
-      _storeData("highscore", "" + index);
+    if (index + 1 >= highScore) {
+      setHighScore(index + 1);
+      _storeData("highscore", "" + (index + 1));
     }
   }
 
