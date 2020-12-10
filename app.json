@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "memrise",
-    "slug": "memrise",
-    "version": "1.0.0",
+    "name": "memorPIze",
+    "slug": "memorPIze",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -24,7 +24,8 @@
       "favicon": "./assets/favicon.png"
     },
     "android": {
-      "package": "com.memorp.ze"
+      "package": "com.memorp.ze",
+      "versionCode": "4"
     }
   }
 }
